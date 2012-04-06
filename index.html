@@ -1,0 +1,189 @@
+<html>
+ <head>
+   <link rel="stylesheet" href="css/VMCompiler.css" />
+   <script src="js/VMCompiler.js"></script>
+   <script src="js/init.js"></script>
+ </head>
+ 
+ <body>
+
+  <div id="overlay" class="overlay" align="center">
+       <div id="SSE-wrapper">
+          <div style="text-align:right">
+             <a href="javascript:void(0)" id="SSE_close">close</a>
+          </div>
+          <table cellspacing="1" id="SSE">
+             <tr><td colspan="3" class="overlay-header">Step by Step Execution</td></tr>
+             <tr>
+                <td class="overlay-title">Code</td>
+                <td class="overlay-title">Summary</td>
+                <td class="overlay-title">Stack</td></tr>
+             <tr>
+                <td id="SSE_code"></td>
+                <td align="center" id="SSE_actions">
+                   <table cellspacing="1" cellpadding="0" class="overlay-instructions">
+                      <tr><td colspan="2" class="overlay-header-2">Instruction Navigation:</td></tr>
+                      <tr>
+                         <td align="center"><input type="button" id="SSE_next" value="Next" /></td>
+                         <td align="center"><input type="button" id="SSE_prev" value="Prev" /></td>
+                      </tr>
+                      
+                      <tr><td colspan="2" class="overlay-header-2">Auto Navigation:</td></tr>
+                      <tr>
+                         <td colspan="2">
+                            <p align="center" style="padding: 10px 0 10px 0; margin:0;">
+                               <input type="text" size="2" id="SSE_timeout" value="0.5" /> sec.
+                               <input type="button" id="SSE_startTimer" value="Start" />
+                            </p>
+                            <input type="radio" id="SSE_timer_forward" name="direction" checked /> <label for="SSE_direction_forward">Forward execution</label> <br />
+                            <input type="radio" id="SSE_timer_backward" name="direction" /> <label for="SSE_direction_backward">Backward execution</label>
+                         </td>
+                      </tr>
+                      
+                      <tr><td colspan="2" class="overlay-header-2">Position:</td></tr>
+                      <tr><td colspan="2" id="SSE_position" align="right">0</td></tr>
+                      
+                   </table>
+                </td>
+                <td id="SSE_stack"></td>
+             </tr>
+             <tr><td colspan="3" id="SSE_evolution"></td></tr>
+         </table>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="description">
+        <h3>
+          VM Compiler
+        </h3>
+        <div id="menu">
+          <span style="display:inline-block;width:10px;"></span>
+          <a href="javascript:void(0)" class="link">Info</a>
+          <span style="float:right">
+            <a href="javascript:void(0)" class="link">How to use</a>
+            <a href="javascript:void(0)" class="link">Commands</a>
+            <a href="javascript:void(0)" class="link">Example</a>
+            <a href="javascript:void(0)" class="link">About</a>
+          </span>
+          <div class="container">
+            Welcome to the VM Compiler.<br />
+            You can use the tabs above to find out some useful info &amp; examples
+            on how to use the compiler
+          </div>
+          <div class="container">
+            Just type (or copy-paste) the code in the box and click the 
+            "Compile"/"Step-by-Step Execution" button bellow. <br />
+            You can use the stack on the right to modify the values of it at any time<br />
+            Use the +/- buttons next to every element to add/removes elements in the stack <br />
+          </div>
+          <div class="container">
+            VM, in contrast to the basic MIPS assembler, parses the code by tokens (not by lines).
+            We define a token as a command or an arguments. i.e.( con 1 peek 2 )
+            are 4 tokens.
+            <table cellspacing="0" cellpadding="0">
+              <tr><td><b>peek x</b></td><td> removes the x-th element and pushes it on top of the stack</td></tr>
+              <tr><td><b>poke x</b></td><td>pushes the a copy of the x-th element on top of the stack</td></tr>
+              <tr><td><b>con x</b></td><td>push( x )</td></tr>
+              <tr><td><b>add</b></td><td>pop(a), pop(b), push( a + b )</td></tr>
+              <tr><td><b>sub</b></td><td>pop(a), pop(b), push( a - b )</td></tr>
+              <tr><td><b>mul</b></td><td>pop(a), pop(b), push( a * b )</td></tr>
+              <tr><td><b>leq</b></td><td>pop(a), pop(b). push( a&lt;=b? 1 : 0 )</td></tr>
+              <tr><td><b>jp x</b></td><td>Jump x tokens( not lines )</td></tr>
+              <tr><td><b>cjp x</b></td><td>Jump x tokens if pop(a), a == 0</td></tr>
+              <tr><td><b>halt</b></td><td>Stops the execution</td></tr>
+            </table>
+          </div>
+          <div class="container">
+            This is the problem that got it all started: <br />
+            <hr />
+            You are given a number n in S(0). Write a L(VM) program that will 
+            output the result of the following expression in S(1):
+            <pre>
+int sum = 0;
+for( int i=0; i&lt;n; ++i ){
+  sum = sum + i * 2 ^ i;
+}
+            </pre>
+            And sthe solution for this would be:
+            <pre>
+con 1
+add
+con 0 
+con 1
+con 2
+peek 0 con 1 leq cjp 35
+peek 3
+peek 2
+mul
+peek 1
+add
+poke 1
+peek 2
+con 1
+add
+poke 2
+peek 3
+con 2
+mul
+poke 3
+con 1 
+peek 0
+sub
+poke 0
+jp -38 
+halt
+            </pre>
+          </div>
+          <div class="container">
+            This little app has been developed by 
+              <a href="htpp://stefan.code4fun.de" target="_blank">Stefan Mirea</a>
+              in response to a homework received at the General Computer Science
+              course where we had to output the stack trace for a VM program. <br />
+              It also became quite popular after every TA for the GenCS II course
+              started using it to grade homeworks ^.^. <br />
+              <br />
+              Hope you find it useful, I know I did :D<br />
+              If you have any bugs to report of stuff like that,
+              just <a href="mailto:steven.mirea@gmail.com">send me an email</a>!<br />
+              <br />
+              Happy coding!
+          </div>
+        </div>
+      </div>
+      
+      <table id="editor">
+        <tr>
+          <td id="textareaHolder">
+              <textarea id="VMC_textarea"></textarea>
+          </td>
+          
+          <td align="center" style="width:100px" id="options">
+              <div style="background: white; padding: 3px; border-bottom: 1px solid #696969; margin-top: 2px; font-weight: bold;">Options</div>
+              
+              <div>
+                <h3>Max instructions</h3>
+                <div><input type="text" style="width:100%" id="opt_maxInstructions" value="1000" /></div>
+              </div>
+          </td>
+          
+          <td id="VMC_stackHolder" align="center"></td>
+        </tr>
+        <tr>
+          <td id="actionHolder" colspan="3" align="center">
+              <input type="button" value="Compile" id="VMC_Start" />
+              <input type="button" value="Step-by-Step Execution" id="VMC_SSE" />
+          </td>
+        </tr>
+        <tr>
+          <td id="VMC_stackEvolution" colspan="3"></td>
+        </tr>
+      </table>
+   </div>
+   
+   <div id="footer">
+      <a href="mailto:steven.mirea@gmail.com" title="Bugs, comments, suggestions go to this dude">Developed by Stefan Mirea</a>
+   </div>
+ </body>
+ 
+</html>
